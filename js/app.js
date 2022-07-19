@@ -1,11 +1,24 @@
 const formulario = document.querySelector('#formularioItens');
 const lista = document.querySelector('#lista');
+const itensLocalStorage = [];
 
 const limpaInput = (form) => {
 	form.children.nome.value = '';
 	form.children.quantidade.value = '';
 
 	form.children.nome.focus();
+};
+
+const storageLocal = (nome, quantidade) => {
+	const itemNovo = {
+		nome,
+		quantidade,
+	};
+
+	const jsonItem = JSON.stringify(itemNovo);
+	itensLocalStorage.push(jsonItem);
+
+	localStorage.setItem('DadosUsuario', itensLocalStorage);
 };
 
 const criaElementoEmTela = (nome, quantidade) => {
@@ -27,9 +40,10 @@ const criaElementoEmTela = (nome, quantidade) => {
 formulario.addEventListener('submit', (ev) => {
 	ev.preventDefault();
 
-	const nome = ev.target.elements.nome.value;
-	const quantidade = ev.target.elements.quantidade.value;
+	const { nome } = ev.target.elements;
+	const { quantidade } = ev.target.elements;
 
-	criaElementoEmTela(nome, quantidade);
+	criaElementoEmTela(nome.value, quantidade.value);
+	storageLocal(nome.value, quantidade.value);
 	limpaInput(formulario);
 });
