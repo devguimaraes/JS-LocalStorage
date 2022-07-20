@@ -11,5 +11,23 @@
   "dependencies": {
     "vercel": "^27.1.5",
     "yarn": "^1.22.19"
-  }
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "name": "js-localstorage",
+  "description": "<h1  align='center'> TODO LIST - MOCHILA</h1>",
+  "version": "1.0.0",
+  "main": ".eslintrc.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devguimaraes/JS-LocalStorage.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devguimaraes/JS-LocalStorage/issues"
+  },
+  "homepage": "https://github.com/devguimaraes/JS-LocalStorage#readme"
 }
