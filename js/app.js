@@ -1,13 +1,6 @@
 const formulario = document.querySelector('#formularioItens');
 const lista = document.querySelector('#lista');
 
-const limpaInput = (form) => {
-	form.children.nome.value = '';
-	form.children.quantidade.value = '';
-
-	form.children.nome.focus();
-};
-
 const criaElementoEmTela = (el) => {
 	const itemLista = document.createElement('li');
 	itemLista.classList.add('item');
@@ -20,6 +13,13 @@ const criaElementoEmTela = (el) => {
 	itemLista.innerHTML += el.nome;
 
 	lista.appendChild(itemLista);
+	// eslint-disable-next-line no-use-before-define
+	itemLista.appendChild(criaBotaoDeletar(el.id));
+};
+
+const atualizaElemento = (itemAutal) => {
+	document.querySelector(`[data-id='${itemAutal.id}']`).innerHTML =
+		itemAutal.quantidade;
 };
 
 const itens = JSON.parse(localStorage.getItem('DadosUsuario')) || [];
@@ -27,10 +27,36 @@ itens.forEach((el) => {
 	criaElementoEmTela(el);
 });
 
-const atualizaElemento = (itemAutal) => {
-	document.querySelector(`[data-id='${itemAutal.id}']`).innerHTML =
-		itemAutal.quantidade;
+const setLocalSotrage = (param) => {
+	localStorage.setItem('DadosUsuario', JSON.stringify(param));
 };
+
+const limpaInput = (form) => {
+	form.children.nome.value = '';
+	form.children.quantidade.value = '';
+
+	form.children.nome.focus();
+};
+
+function deletaElemento(param, id) {
+	param.remove();
+	itens.splice(
+		itens.findIndex((elemento) => elemento.id === id),
+		1
+	);
+	setLocalSotrage(itens);
+}
+
+function criaBotaoDeletar(id) {
+	const botaoDel = document.createElement('button');
+	botaoDel.innerText = 'X';
+	// eslint-disable-next-line func-names
+	botaoDel.addEventListener('click', function () {
+		deletaElemento(this.parentNode, id);
+	});
+
+	return botaoDel;
+}
 
 // comecar aqui
 formulario.addEventListener('submit', (ev) => {
@@ -49,14 +75,15 @@ formulario.addEventListener('submit', (ev) => {
 	if (elementoExiste) {
 		itemAutal.id = elementoExiste.id;
 		atualizaElemento(itemAutal);
-		itens[elementoExiste.id] = itemAutal;
+		itens[itens.findIndex((elemento) => elemento.id === elementoExiste.id)] =
+			itemAutal;
 	} else {
-		itemAutal.id = itens.length;
+		itemAutal.id = itens[itens.length - 1] ? itens[itens.length - 1].id + 1 : 0;
 
 		criaElementoEmTela(itemAutal);
 		itens.push(itemAutal);
 	}
 
-	localStorage.setItem('DadosUsuario', JSON.stringify(itens));
+	setLocalSotrage(itens);
 	limpaInput(formulario);
 });
