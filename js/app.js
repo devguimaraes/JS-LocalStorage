@@ -8,28 +8,55 @@ const limpaInput = (form) => {
 	form.children.nome.focus();
 };
 
-const criaElementoEmTela = (nome, quantidade) => {
+const criaElementoEmTela = (el) => {
 	const itemLista = document.createElement('li');
 	itemLista.classList.add('item');
 
 	const quantidadeItem = document.createElement('strong');
-	quantidadeItem.innerHTML = quantidade;
+	quantidadeItem.innerHTML = el.quantidade;
+	quantidadeItem.dataset.id = el.id;
+	itemLista.appendChild(quantidadeItem);
 
-	const nomeItem = document.createElement('p');
-	nomeItem.innerHTML = nome;
+	itemLista.innerHTML += el.nome;
 
 	lista.appendChild(itemLista);
-
-	itemLista.appendChild(quantidadeItem);
-	itemLista.appendChild(nomeItem);
 };
 
+const itens = JSON.parse(localStorage.getItem('DadosUsuario')) || [];
+itens.forEach((el) => {
+	criaElementoEmTela(el);
+});
+
+const atualizaElemento = (itemAutal) => {
+	document.querySelector(`[data-id='${itemAutal.id}']`).innerHTML =
+		itemAutal.quantidade;
+};
+
+// comecar aqui
 formulario.addEventListener('submit', (ev) => {
 	ev.preventDefault();
 
 	const nome = ev.target.elements.nome.value;
 	const quantidade = ev.target.elements.quantidade.value;
 
-	criaElementoEmTela(nome, quantidade);
+	const elementoExiste = itens.find((elemento) => elemento.nome === nome.value);
+
+	const itemAutal = {
+		nome: nome.value,
+		quantidade: quantidade.value,
+	};
+
+	if (elementoExiste) {
+		itemAutal.id = elementoExiste.id;
+		atualizaElemento(itemAutal);
+		itens[elementoExiste.id] = itemAutal;
+	} else {
+		itemAutal.id = itens.length;
+
+		criaElementoEmTela(itemAutal);
+		itens.push(itemAutal);
+	}
+
+	localStorage.setItem('DadosUsuario', JSON.stringify(itens));
 	limpaInput(formulario);
 });
